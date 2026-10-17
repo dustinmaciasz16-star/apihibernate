@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.krakedev.peliculas.entidades.Pelicula;
@@ -85,11 +86,15 @@ public class PeliculaController {
 		}
 	}
 	
-	@GetMapping("/genero/genero")
-	public ResponseEntity<?> buscarPorGenero(@PathVariable String genero) {
+	@GetMapping("/genero")
+	public ResponseEntity<?> buscarPorGenero(@RequestParam(required=false) String genero) {
 		try {
 			List<Pelicula> encontrado = servicio.bucarPorGenero(genero);
-			if(encontrado == null) {
+			if(genero != null) {
+				encontrado = servicio.bucarPorGenero(genero);
+			}
+			
+			if(encontrado.size() <= 0) {
 				return ResponseEntity.notFound().build();
 			}
 			return ResponseEntity.ok(encontrado);
@@ -98,11 +103,15 @@ public class PeliculaController {
 		}
 	}
 	
-	@GetMapping("/disponible/disponible")
-	public ResponseEntity<?> buscarPorDisponible(@PathVariable boolean disponible) {
+	@GetMapping("/disponible")
+	public ResponseEntity<?> buscarPorDisponible(@RequestParam(required=false) Boolean disponible) {
 		try {
 			List<Pelicula> encontrado = servicio.buscarPorDisponible(disponible);
-			if(encontrado == null) {
+			if(disponible != null) {
+				encontrado = servicio.buscarPorDisponible(disponible);
+			}
+			
+			if(encontrado.size() <= 0) {
 				return ResponseEntity.notFound().build();
 			}
 			return ResponseEntity.ok(encontrado);
@@ -110,5 +119,27 @@ public class PeliculaController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al buscar la peliculas por disponivilidad");
 		}
 	}
+	
+	/*@GetMapping("/buscar")
+	public ResponseEntity<?> buscar(@RequestParam(required=false) String genero, @RequestParam(required=false) Boolean disponible) {
+		try {
+			List<Pelicula> peliculas = new ArrayList<Pelicula>();
+			if(genero != null) {
+				peliculas = servicio.bucarPorGenero(genero);
+			}
+			
+			if(disponible != null) {
+				peliculas = servicio.buscarPorDisponible(disponible);
+			}
+			
+			if(peliculas.size() <= 0) {
+				return ResponseEntity.notFound().build();
+			}
+			return ResponseEntity.ok(peliculas);
+		}catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al buscar la peliculas");
+		}
+	}*/
+	
 	
 }
